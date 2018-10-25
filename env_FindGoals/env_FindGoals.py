@@ -109,6 +109,8 @@ class EnvFindGoals(object):
 
     def step(self, action1, action2):
         reward = 0
+        self.start1 = [3, 1]
+        self.start2 = [6, 1]
         # agent1 move
         if action1 == 0:    # move up
             reward = reward - 1
@@ -116,44 +118,24 @@ class EnvFindGoals(object):
                 self.agt1_pos[1] = self.agt1_pos[1] + 1
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1] - 1] = 0
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
-            if self.agt1_pos == self.dest1:
-                self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 0
-                self.agt1_pos = self.start1
-                self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
-                reward = reward + 100
         elif action1 == 1:  # move down
             reward = reward - 1
             if self.occupancy[self.agt1_pos[0]][self.agt1_pos[1] - 1] != 1:  # if can move
                 self.agt1_pos[1] = self.agt1_pos[1] - 1
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1] + 1] = 0
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
-            if self.agt1_pos == self.dest1:
-                self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 0
-                self.agt1_pos = self.start1
-                self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
-                reward = reward + 100
         elif action1 == 2:  # move left
             reward = reward - 1
             if self.occupancy[self.agt1_pos[0] - 1][self.agt1_pos[1]] != 1:  # if can move
                 self.agt1_pos[0] = self.agt1_pos[0] - 1
                 self.occupancy[self.agt1_pos[0] + 1][self.agt1_pos[1]] = 0
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
-            if self.agt1_pos == self.dest1:
-                self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 0
-                self.agt1_pos = self.start1
-                self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
-                reward = reward + 100
         elif action1 == 3:  # move right
             reward = reward - 1
             if self.occupancy[self.agt1_pos[0] + 1][self.agt1_pos[1]] != 1:  # if can move
                 self.agt1_pos[0] = self.agt1_pos[0] + 1
                 self.occupancy[self.agt1_pos[0] - 1][self.agt1_pos[1]] = 0
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
-            if self.agt1_pos == self.dest1:
-                self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 0
-                self.agt1_pos = self.start1
-                self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
-                reward = reward + 100
 
         # agent2 move
         if action2 == 0:    # move up
@@ -162,44 +144,36 @@ class EnvFindGoals(object):
                 self.agt2_pos[1] = self.agt2_pos[1] + 1
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1] - 1] = 0
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
-            if self.agt2_pos == self.dest2:
-                self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 0
-                self.agt2_pos = self.start2
-                self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
-                reward = reward + 100
         elif action2 == 1:  # move down
             reward = reward - 1
             if self.occupancy[self.agt2_pos[0]][self.agt2_pos[1] - 1] != 1:  # if can move
                 self.agt2_pos[1] = self.agt2_pos[1] - 1
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1] + 1] = 0
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
-            if self.agt2_pos == self.dest2:
-                self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 0
-                self.agt2_pos = self.start2
-                self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
-                reward = reward + 100
         elif action2 == 2:  # move left
             reward = reward - 1
             if self.occupancy[self.agt2_pos[0] - 1][self.agt2_pos[1]] != 1:  # if can move
                 self.agt2_pos[0] = self.agt2_pos[0] - 1
                 self.occupancy[self.agt2_pos[0] + 1][self.agt2_pos[1]] = 0
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
-            if self.agt2_pos == self.dest2:
-                self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 0
-                self.agt2_pos = self.start2
-                self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
-                reward = reward + 100
         elif action2 == 3:  # move right
             reward = reward - 1
             if self.occupancy[self.agt2_pos[0] + 1][self.agt2_pos[1]] != 1:  # if can move
                 self.agt2_pos[0] = self.agt2_pos[0] + 1
                 self.occupancy[self.agt2_pos[0] - 1][self.agt2_pos[1]] = 0
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
-            if self.agt2_pos == self.dest2:
-                self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 0
-                self.agt2_pos = self.start2
-                self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
-                reward = reward + 100
+
+        if self.agt1_pos == self.dest1:
+            self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 0
+            self.agt1_pos = self.start1
+            self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
+            reward = reward + 100
+
+        if self.agt2_pos == self.dest2:
+            self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 0
+            self.agt2_pos = self.start2
+            self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
+            reward = reward + 100
 
         obs_1 = self.get_agt1_obs()
         obs_2 = self.get_agt2_obs()
