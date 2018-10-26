@@ -5,47 +5,51 @@ import random
 
 
 class EnvCatchPigs(object):
-    def __init__(self):
-        self.occupancy = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
-                   [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                   [1, 0, 1, 0, 1, 0, 1, 0, 1],
-                   [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                   [1, 0, 1, 0, 1, 0, 1, 0, 1],
-                   [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                   [1, 0, 1, 0, 1, 0, 1, 0, 1],
-                   [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                   [1, 1, 1, 1, 1, 1, 1, 1, 1]]
+    def __init__(self, size):
+        assert self.check_size(size)
+        self.map_size = size
+        self.occupancy = np.zeros((self.map_size, self.map_size))
+        for i in range(self.map_size):
+            self.occupancy[0][i] = 1
+            self.occupancy[self.map_size-1][i] = 1
+            self.occupancy[i][0] = 1
+            self.occupancy[i][self.map_size-1] = 1
 
-        self.raw_occupancy = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
-                   [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                   [1, 0, 1, 0, 1, 0, 1, 0, 1],
-                   [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                   [1, 0, 1, 0, 1, 0, 1, 0, 1],
-                   [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                   [1, 0, 1, 0, 1, 0, 1, 0, 1],
-                   [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                   [1, 1, 1, 1, 1, 1, 1, 1, 1]]
+        for i in range(2, self.map_size - 2, 2):
+            for j in range(2, self.map_size - 2, 2):
+                self.occupancy[i][j] = 1
+
+        self.raw_occupancy = np.zeros((self.map_size, self.map_size))
+        for i in range(self.map_size):
+            self.raw_occupancy[0][i] = 1
+            self.raw_occupancy[self.map_size - 1][i] = 1
+            self.raw_occupancy[i][0] = 1
+            self.raw_occupancy[i][self.map_size - 1] = 1
+
+        for i in range(2, self.map_size - 2, 2):
+            for j in range(2, self.map_size - 2, 2):
+                self.raw_occupancy[i][j] = 1
 
         # initialize agent 1
-        self.agt1_pos = [random.randint(1, 7), random.randint(1, 7)]
+        self.agt1_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         while self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] == 1:
-            self.agt1_pos = [random.randint(1, 7), random.randint(1, 7)]
+            self.agt1_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
 
         self.agt1_ori = random.randint(0, 3)
 
         # initialize agent 2
-        self.agt2_pos = [random.randint(1, 7), random.randint(1, 7)]
+        self.agt2_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         while self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] == 1:
-            self.agt2_pos = [random.randint(1, 7), random.randint(1, 7)]
+            self.agt2_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
 
         self.agt2_ori = random.randint(0, 3)
 
         # initialize pig
-        self.pig_pos = [random.randint(1, 7), random.randint(1, 7)]
+        self.pig_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         while self.occupancy[self.pig_pos[0]][self.pig_pos[1]] == 1:
-            self.pig_pos = [random.randint(1, 7), random.randint(1, 7)]
+            self.pig_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         self.occupancy[self.pig_pos[0]][self.pig_pos[1]] = 1
 
         self.pig_ori = random.randint(0, 3)
@@ -53,37 +57,45 @@ class EnvCatchPigs(object):
         self.if_agt1_catches = False
         self.if_agt2_catches = False
 
+    def check_size(self, size):
+        print("size of map should be an odd integer no smaller than 5")
+        if (size % 2) == 1 and size >= 5:
+            return True
+        else:
+            return False
+
     def reset(self):
-        self.occupancy = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
-                          [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                          [1, 0, 1, 0, 1, 0, 1, 0, 1],
-                          [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                          [1, 0, 1, 0, 1, 0, 1, 0, 1],
-                          [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                          [1, 0, 1, 0, 1, 0, 1, 0, 1],
-                          [1, 0, 0, 0, 0, 0, 0, 0, 1],
-                          [1, 1, 1, 1, 1, 1, 1, 1, 1]]
+        self.occupancy = np.zeros((self.map_size, self.map_size))
+        for i in range(self.map_size):
+            self.occupancy[0][i] = 1
+            self.occupancy[self.map_size - 1][i] = 1
+            self.occupancy[i][0] = 1
+            self.occupancy[i][self.map_size - 1] = 1
+
+        for i in range(2, self.map_size - 2, 2):
+            for j in range(2, self.map_size - 2, 2):
+                self.occupancy[i][j] = 1
 
         # initialize agent 1
-        self.agt1_pos = [random.randint(1, 7), random.randint(1, 7)]
+        self.agt1_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         while self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] == 1:
-            self.agt1_pos = [random.randint(1, 7), random.randint(1, 7)]
+            self.agt1_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
 
         self.agt1_ori = random.randint(0, 3)
 
         # initialize agent 2
-        self.agt2_pos = [random.randint(1, 7), random.randint(1, 7)]
+        self.agt2_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         while self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] == 1:
-            self.agt2_pos = [random.randint(1, 7), random.randint(1, 7)]
+            self.agt2_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
 
         self.agt2_ori = random.randint(0, 3)
 
         # initialize pig
-        self.pig_pos = [random.randint(1, 7), random.randint(1, 7)]
+        self.pig_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         while self.occupancy[self.pig_pos[0]][self.pig_pos[1]] == 1:
-            self.pig_pos = [random.randint(1, 7), random.randint(1, 7)]
+            self.pig_pos = [random.randint(1, self.map_size-2), random.randint(1, self.map_size-2)]
         self.occupancy[self.pig_pos[0]][self.pig_pos[1]] = 1
 
         self.pig_ori = random.randint(0, 3)
@@ -92,9 +104,9 @@ class EnvCatchPigs(object):
         self.if_agt2_catches = False
 
     def get_agt1_obs(self):
-        obs = np.zeros((9, 9))
-        for i in range(9):
-            for j in range(9):
+        obs = np.zeros((self.map_size, self.map_size))
+        for i in range(self.map_size):
+            for j in range(self.map_size):
                 obs[i][j] = 4
 
         x = self.agt1_pos[0]
@@ -102,7 +114,7 @@ class EnvCatchPigs(object):
 
         if self.agt1_ori == 0:  # if agent is facing west
             for i in range(0, x+1):
-                for j in range(max(0, y-x+i), min(8, y+x-i)+1):
+                for j in range(max(0, y-x+i), min(self.map_size-1, y+x-i)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -112,8 +124,8 @@ class EnvCatchPigs(object):
                         obs[i][j] = 3
 
         elif self.agt1_ori == 1:    # if agent is facing north
-            for j in range(y, 9):
-                for i in range(max(0, x+y-j), min(8, x-y+j)+1):
+            for j in range(y, self.map_size):
+                for i in range(max(0, x+y-j), min(self.map_size-1, x-y+j)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -123,8 +135,8 @@ class EnvCatchPigs(object):
                         obs[i][j] = 3
 
         elif self.agt1_ori == 2:    # if agent is facing east
-            for i in range(x, 9):
-                for j in range(max(0, y+x-i), min(8, y-x+i)+1):
+            for i in range(x, self.map_size):
+                for j in range(max(0, y+x-i), min(self.map_size-1, y-x+i)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -135,7 +147,7 @@ class EnvCatchPigs(object):
 
         elif self.agt1_ori == 3:    # if agent is facing south
             for j in range(0, y+1):
-                for i in range(max(0, x-y+j), min(8, x+y-j)+1):
+                for i in range(max(0, x-y+j), min(self.map_size-1, x+y-j)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -147,9 +159,9 @@ class EnvCatchPigs(object):
         return obs
 
     def get_agt2_obs(self):
-        obs = np.zeros((9, 9))
-        for i in range(9):
-            for j in range(9):
+        obs = np.zeros((self.map_size, self.map_size))
+        for i in range(self.map_size):
+            for j in range(self.map_size):
                 obs[i][j] = 4
 
         x = self.agt2_pos[0]
@@ -157,7 +169,7 @@ class EnvCatchPigs(object):
 
         if self.agt2_ori == 0:  # if agent is facing west
             for i in range(0, x + 1):
-                for j in range(max(0, y - x + i), min(8, y + x - i)+1):
+                for j in range(max(0, y - x + i), min(self.map_size-1, y + x - i)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -167,8 +179,8 @@ class EnvCatchPigs(object):
                         obs[i][j] = 3
 
         elif self.agt2_ori == 1:  # if agent is facing north
-            for j in range(y, 9):
-                for i in range(max(0, x + y - j), min(8, x - y + j)+1):
+            for j in range(y, self.map_size):
+                for i in range(max(0, x + y - j), min(self.map_size-1, x - y + j)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -178,8 +190,8 @@ class EnvCatchPigs(object):
                         obs[i][j] = 3
 
         elif self.agt2_ori == 2:  # if agent is facing east
-            for i in range(x, 9):
-                for j in range(max(0, y + x - i), min(8, y - x + i)+1):
+            for i in range(x, self.map_size):
+                for j in range(max(0, y + x - i), min(self.map_size-1, y - x + i)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -190,7 +202,7 @@ class EnvCatchPigs(object):
 
         elif self.agt2_ori == 3:  # if agent is facing south
             for j in range(0, y + 1):
-                for i in range(max(0, x - y + j), min(8, x + y - j)+1):
+                for i in range(max(0, x - y + j), min(self.map_size-1, x + y - j)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -202,9 +214,9 @@ class EnvCatchPigs(object):
         return obs
 
     def get_pig_obs(self):
-        obs = np.zeros((9, 9))
-        for i in range(9):
-            for j in range(9):
+        obs = np.zeros((self.map_size, self.map_size))
+        for i in range(self.map_size):
+            for j in range(self.map_size):
                 obs[i][j] = 4
 
         x = self.pig_pos[0]
@@ -212,7 +224,7 @@ class EnvCatchPigs(object):
 
         if self.pig_ori == 0:  # if agent is facing west
             for i in range(0, x + 1):
-                for j in range(max(0, y - x + i), min(8, y + x - i)+1):
+                for j in range(max(0, y - x + i), min(self.map_size-1, y + x - i)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -222,8 +234,8 @@ class EnvCatchPigs(object):
                         obs[i][j] = 3
 
         elif self.pig_ori == 1:  # if agent is facing north
-            for j in range(y, 9):
-                for i in range(max(0, x + y - j), min(8, x - y + j)+1):
+            for j in range(y, self.map_size):
+                for i in range(max(0, x + y - j), min(self.map_size-1, x - y + j)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -233,8 +245,8 @@ class EnvCatchPigs(object):
                         obs[i][j] = 3
 
         elif self.pig_ori == 2:  # if agent is facing east
-            for i in range(x, 9):
-                for j in range(max(0, y + x - i), min(8, y - x + i)+1):
+            for i in range(x, self.map_size):
+                for j in range(max(0, y + x - i), min(self.map_size-1, y - x + i)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -245,7 +257,7 @@ class EnvCatchPigs(object):
 
         elif self.pig_ori == 3:  # if agent is facing south
             for j in range(0, y + 1):
-                for i in range(max(0, x - y + j), min(8, x + y - j)+1):
+                for i in range(max(0, x - y + j), min(self.map_size-1, x + y - j)+1):
                     obs[i][j] = self.raw_occupancy[i][j]
                     if [i, j] == self.agt1_pos:
                         obs[i][j] = 2
@@ -263,7 +275,7 @@ class EnvCatchPigs(object):
 
         # agent1 move
         if action1 == 0:    # turn left
-            reward_1 = reward_1 - 1
+            #reward_1 = reward_1 - 1
             if self.agt1_ori == 0:
                 self.agt1_ori = 3
             elif self.agt1_ori == 1:
@@ -274,7 +286,7 @@ class EnvCatchPigs(object):
                 self.agt1_ori = 2
 
         elif action1 == 1:  # turn right
-            reward_1 = reward_1 - 1
+            #reward_1 = reward_1 - 1
             if self.agt1_ori == 0:
                 self.agt1_ori = 1
             elif self.agt1_ori == 1:
@@ -285,7 +297,7 @@ class EnvCatchPigs(object):
                 self.agt1_ori = 0
 
         elif action1 == 2:  # move
-            reward_1 = reward_1 - 1
+            #reward_1 = reward_1 - 1
             if self.agt1_ori == 0:
                 if self.occupancy[self.agt1_pos[0] - 1][self.agt1_pos[1]] != 1:  # if can move
                     self.agt1_pos[0] = self.agt1_pos[0] - 1
@@ -308,7 +320,7 @@ class EnvCatchPigs(object):
                     self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
 
         elif action1 == 3:  # catch
-            reward_1 = reward_1 - 1
+            #reward_1 = reward_1 - 1
             if self.agt1_ori == 0:
                 if self.pig_pos[0] == self.agt1_pos[0]-1:
                     if self.pig_pos[1] == self.agt1_pos[1]:
@@ -328,7 +340,7 @@ class EnvCatchPigs(object):
 
         # agent2 move
         if action2 == 0:    # turn left
-            reward_2 = reward_2 - 1
+            #reward_2 = reward_2 - 1
             if self.agt2_ori == 0:
                 self.agt2_ori = 3
             elif self.agt2_ori == 1:
@@ -339,7 +351,7 @@ class EnvCatchPigs(object):
                 self.agt2_ori = 2
 
         elif action2 == 1:  # turn right
-            reward_2 = reward_2 - 1
+            #reward_2 = reward_2 - 1
             if self.agt2_ori == 0:
                 self.agt2_ori = 1
             elif self.agt2_ori == 1:
@@ -350,7 +362,7 @@ class EnvCatchPigs(object):
                 self.agt2_ori = 0
 
         elif action2 == 2:  # move
-            reward_2 = reward_2 - 1
+            #reward_2 = reward_2 - 1
             if self.agt2_ori == 0:
                 if self.occupancy[self.agt2_pos[0] - 1][self.agt2_pos[1]] != 1:  # if can move
                     self.agt2_pos[0] = self.agt2_pos[0] - 1
@@ -373,7 +385,7 @@ class EnvCatchPigs(object):
                     self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
 
         elif action2 == 3:  # catch
-            reward_2 = reward_2 - 1
+            #reward_2 = reward_2 - 1
             if self.agt2_ori == 0:
                 if self.pig_pos[0] == self.agt2_pos[0]-1:
                     if self.pig_pos[1] == self.agt2_pos[1]:
@@ -467,14 +479,14 @@ class EnvCatchPigs(object):
         ax4 = fig.add_subplot(gs[2, 2:3])
 
         # plot grid
-        for k in range(9):
-            for j in range(9):
+        for k in range(self.map_size):
+            for j in range(self.map_size):
                 rect = plt.Rectangle((k, j), 1, 1, color='k', fill=False)
                 ax1.add_patch(rect)
 
         # plot block
-        for k in range(9):
-            for j in range(9):
+        for k in range(self.map_size):
+            for j in range(self.map_size):
                     if self.occupancy[k][j] == 1:
                         rect = plt.Rectangle((k, j), 1, 1, color='k')
                         ax1.add_patch(rect)
@@ -489,18 +501,18 @@ class EnvCatchPigs(object):
         rect = plt.Rectangle((self.agt2_pos[0], self.agt2_pos[1]), 1, 1, color='b')
         ax1.add_patch(rect)
 
-        ax1.set_xlim([-1, 11])
-        ax1.set_ylim([-1, 11])
+        ax1.set_xlim([-1, self.map_size+2])
+        ax1.set_ylim([-1, self.map_size+2])
 
         # plot grid
-        for k in range(9):
-            for j in range(9):
+        for k in range(self.map_size):
+            for j in range(self.map_size):
                 rect = plt.Rectangle((k, j), 1, 1, color='k', fill=False)
                 ax2.add_patch(rect)
 
         obs_1 = self.get_agt1_obs()
-        for k in range(9):
-            for j in range(9):
+        for k in range(self.map_size):
+            for j in range(self.map_size):
                 if obs_1[k][j] == 2:
                     rect = plt.Rectangle((k, j), 1, 1, color='r')
                     ax2.add_patch(rect)
@@ -515,18 +527,18 @@ class EnvCatchPigs(object):
                     ax2.add_patch(rect)
 
 
-        ax2.set_xlim([-1, 11])
-        ax2.set_ylim([-1, 11])
+        ax2.set_xlim([-1, self.map_size+2])
+        ax2.set_ylim([-1, self.map_size+2])
 
         # plot grid
-        for k in range(9):
-            for j in range(9):
+        for k in range(self.map_size):
+            for j in range(self.map_size):
                 rect = plt.Rectangle((k, j), 1, 1, color='k', fill=False)
                 ax3.add_patch(rect)
 
         obs_2 = self.get_agt2_obs()
-        for k in range(9):
-            for j in range(9):
+        for k in range(self.map_size):
+            for j in range(self.map_size):
                 if obs_2[k][j] == 2:
                     rect = plt.Rectangle((k, j), 1, 1, color='r')
                     ax3.add_patch(rect)
@@ -540,18 +552,18 @@ class EnvCatchPigs(object):
                     rect = plt.Rectangle((k, j), 1, 1, color='lightgray')
                     ax3.add_patch(rect)
 
-        ax3.set_xlim([-1, 11])
-        ax3.set_ylim([-1, 11])
+        ax3.set_xlim([-1, self.map_size+2])
+        ax3.set_ylim([-1, self.map_size+2])
 
         # plot grid
-        for k in range(9):
-            for j in range(9):
+        for k in range(self.map_size):
+            for j in range(self.map_size):
                 rect = plt.Rectangle((k, j), 1, 1, color='k', fill=False)
                 ax4.add_patch(rect)
 
         obs_pig = self.get_pig_obs()
-        for k in range(9):
-            for j in range(9):
+        for k in range(self.map_size):
+            for j in range(self.map_size):
                 if obs_pig[k][j] == 2:
                     rect = plt.Rectangle((k, j), 1, 1, color='r')
                     ax4.add_patch(rect)
@@ -565,8 +577,8 @@ class EnvCatchPigs(object):
                     rect = plt.Rectangle((k, j), 1, 1, color='lightgray')
                     ax4.add_patch(rect)
 
-        ax4.set_xlim([-1, 11])
-        ax4.set_ylim([-1, 11])
+        ax4.set_xlim([-1, self.map_size+2])
+        ax4.set_ylim([-1, self.map_size+2])
 
         plt.show()
 
