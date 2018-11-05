@@ -78,6 +78,8 @@ class EnvFindTreasure(object):
         self.occupancy[8][8] = 1
 
     def step(self, action1, action2):
+        self.lever_pos = [6, 3]
+        self.treasure_pos = [8, 8]
         reward = 0
 
         # agent1 move
@@ -145,7 +147,7 @@ class EnvFindTreasure(object):
 
         obs_1 = self.get_agt1_obs()
         obs_2 = self.get_agt2_obs()
-        return reward, obs_1, obs_2, self.occupancy
+        return reward, obs_1, obs_2
 
     def get_agt1_obs(self):
         obs_1 = np.zeros((10, 10))
