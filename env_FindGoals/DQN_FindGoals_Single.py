@@ -1,6 +1,7 @@
 from env_FindGoals import EnvFindGoals
 from keras.models import Sequential
-from keras.layers.core import Dense
+from keras.layers.core import Dense, Flatten, Activation
+from keras.layers.convolutional import Conv2D
 from keras.optimizers import Adam
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,7 +15,7 @@ def print_action_freq(a_list):
         freq[0, int(a_list[k])] = freq[0, int(a_list[k])] + 1
     print(freq)
 
-max_opt_iter = 500
+max_opt_iter = 100
 max_MC_iter = 10000
 max_test_iter = 200
 global_loss = []
@@ -25,13 +26,19 @@ action_num = 5
 env = EnvFindGoals()
 
 model_1 = Sequential()
-model_1.add(Dense(units=100, activation='relu', input_dim=obs_dim))
+model_1.add(Conv2D(16, kernel_size=3, data_format="channels_last", input_shape=(3, 3, 3), strides=(1, 1), padding="same"))
+model_1.add(Activation('relu'))
+model_1.add(Flatten())
+model_1.add(Dense(units=50, activation='relu', input_dim=obs_dim))
 model_1.add(Dense(units=action_num, activation='linear'))
 adam = Adam(lr=1e-4)
 model_1.compile(loss='mse', optimizer=adam)
 
 model_2 = Sequential()
-model_2.add(Dense(units=100, activation='relu', input_dim=obs_dim))
+model_2.add(Conv2D(16, kernel_size=3, data_format="channels_last", input_shape=(3, 3, 3), strides=(1, 1), padding="same"))
+model_2.add(Activation('relu'))
+model_2.add(Flatten())
+model_2.add(Dense(units=50, activation='relu', input_dim=obs_dim))
 model_2.add(Dense(units=action_num, activation='linear'))
 adam = Adam(lr=1e-4)
 model_2.compile(loss='mse', optimizer=adam)
@@ -46,7 +53,7 @@ for opt_iter in range(max_opt_iter):
 
     # generate an episode
     env.reset()
-    batch_1 = [[], [], [], []]  # obs, q, a, r
+    batch_1 = [[], [], [], []]  # obs, q, a, r_1, r_2
     batch_2 = [[], [], [], []]
     done = 0
     for MC_iter in range(max_MC_iter):
@@ -57,6 +64,8 @@ for opt_iter in range(max_opt_iter):
         batch_2[0].append(obs_2)
 
         # predict Q value for each action
+        obs_1 = obs_1.reshape((1, 3, 3, 3))
+        obs_2 = obs_1.reshape((1, 3, 3, 3))
         q_1 = model_1.predict(obs_1)
         q_2 = model_2.predict(obs_2)
         batch_1[1].append(q_1)
@@ -71,21 +80,22 @@ for opt_iter in range(max_opt_iter):
         batch_2[2].append(a_2)
 
         # excute action
-        reward, obs_1, obs_2 = env.step(a_1, a_2)
-        batch_1[3].append(reward)
-        batch_2[3].append(reward)
+        reward_1, reward_2, obs_1, obs_2 = env.step(a_1, a_2)
+        batch_1[3].append(reward_1)
+        batch_2[3].append(reward_2)
+
 
         if done == 1:   # sample 1 more time
             break
 
-        if reward > 0:
+        if reward_1 > 0 or reward_2 > 0:
             done = 1
 
     # form target
     datalen = len(batch_1[0])
     print("episode length= ", datalen)
 
-    target_1 = np.array(batch_1[1]).reshape((datalen, action_num))  #
+    target_1 = np.array(batch_1[1]).reshape((datalen, action_num))
     for i in range(datalen - 1):
         target_1[i][int(batch_1[2][i])] = batch_1[3][i] + 0.99 * np.max(batch_1[1][i + 1])
 
@@ -93,8 +103,8 @@ for opt_iter in range(max_opt_iter):
     for i in range(datalen - 1):
         target_2[i][int(batch_2[2][i])] = batch_2[3][i] + 0.99 * np.max(batch_1[1][i + 1])
 
-    train_x_1 = np.array(batch_1[0]).reshape((datalen, obs_dim))
-    train_x_2 = np.array(batch_2[0]).reshape((datalen, obs_dim))
+    train_x_1 = np.array(batch_1[0]).reshape((datalen, 3, 3, 3))
+    train_x_2 = np.array(batch_2[0]).reshape((datalen, 3, 3, 3))
     train_y_1 = target_1
     train_y_2 = target_2
 
@@ -119,6 +129,8 @@ for opt_iter in range(max_opt_iter):
         obs_2 = env.get_agt2_obs()
 
         # predict Q value for each action
+        obs_1 = obs_1.reshape((1, 3, 3, 3))
+        obs_2 = obs_1.reshape((1, 3, 3, 3))
         q_1 = model_1.predict(obs_1)
         q_2 = model_2.predict(obs_2)
 
@@ -128,15 +140,15 @@ for opt_iter in range(max_opt_iter):
         a_1_list.append(a_1)
         a_2_list.append(a_2)
         # excute action
-        reward, obs_1, obs_2 = env.step(a_1, a_2)
-        acc_reward = acc_reward + reward
+        reward_1, reward_2, obs_1, obs_2 = env.step(a_1, a_2)
+        acc_reward = acc_reward + reward_1 + reward_2
 
     print("Accumulated Reward", acc_reward)
 
     if acc_reward > global_best:
         global_best = acc_reward
-        model_1.save_weights('DQN_FindGoals_model1.h5')
-        model_2.save_weights('DQN_FindGoals_model2.h5')
+        # model_1.save_weights('DQN_FindGoals_model1.h5')
+        # model_2.save_weights('DQN_FindGoals_model2.h5')
         print("save new model")
 
     global_loss.append(acc_reward)
