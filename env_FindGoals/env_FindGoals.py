@@ -200,6 +200,8 @@ class EnvFindGoals(object):
         reward_2 = 0
         self.start1 = [3, 1]
         self.start2 = [6, 1]
+        self.dest1 = [8, 2]
+        self.dest2 = [1, 2]
         # agent1 move
         if action1 == 0:    # move up
             reward_1 = reward_1 - 1
@@ -207,24 +209,32 @@ class EnvFindGoals(object):
                 self.agt1_pos[1] = self.agt1_pos[1] + 1
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1] - 1] = 0
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
+            else:
+                reward_1 = reward_1 - 3
         elif action1 == 1:  # move down
             reward_1 = reward_1 - 1
             if self.occupancy[self.agt1_pos[0]][self.agt1_pos[1] - 1] != 1:  # if can move
                 self.agt1_pos[1] = self.agt1_pos[1] - 1
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1] + 1] = 0
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
+            else:
+                reward_1 = reward_1 - 3
         elif action1 == 2:  # move left
             reward_1 = reward_1 - 1
             if self.occupancy[self.agt1_pos[0] - 1][self.agt1_pos[1]] != 1:  # if can move
                 self.agt1_pos[0] = self.agt1_pos[0] - 1
                 self.occupancy[self.agt1_pos[0] + 1][self.agt1_pos[1]] = 0
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
+            else:
+                reward_1 = reward_1 - 3
         elif action1 == 3:  # move right
             reward_1 = reward_1 - 1
             if self.occupancy[self.agt1_pos[0] + 1][self.agt1_pos[1]] != 1:  # if can move
                 self.agt1_pos[0] = self.agt1_pos[0] + 1
                 self.occupancy[self.agt1_pos[0] - 1][self.agt1_pos[1]] = 0
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
+            else:
+                reward_1 = reward_1 - 3
 
         # agent2 move
         if action2 == 0:    # move up
@@ -233,24 +243,32 @@ class EnvFindGoals(object):
                 self.agt2_pos[1] = self.agt2_pos[1] + 1
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1] - 1] = 0
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
+            else:
+                reward_1 = reward_1 - 3
         elif action2 == 1:  # move down
             reward_2 = reward_2 - 1
             if self.occupancy[self.agt2_pos[0]][self.agt2_pos[1] - 1] != 1:  # if can move
                 self.agt2_pos[1] = self.agt2_pos[1] - 1
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1] + 1] = 0
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
+            else:
+                reward_1 = reward_1 - 3
         elif action2 == 2:  # move left
             reward_2 = reward_2 - 1
             if self.occupancy[self.agt2_pos[0] - 1][self.agt2_pos[1]] != 1:  # if can move
                 self.agt2_pos[0] = self.agt2_pos[0] - 1
                 self.occupancy[self.agt2_pos[0] + 1][self.agt2_pos[1]] = 0
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
+            else:
+                reward_1 = reward_1 - 3
         elif action2 == 3:  # move right
             reward_2 = reward_2 - 1
             if self.occupancy[self.agt2_pos[0] + 1][self.agt2_pos[1]] != 1:  # if can move
                 self.agt2_pos[0] = self.agt2_pos[0] + 1
                 self.occupancy[self.agt2_pos[0] - 1][self.agt2_pos[1]] = 0
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
+            else:
+                reward_1 = reward_1 - 3
 
         if self.agt1_pos == self.dest1:
             self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 0
@@ -271,6 +289,7 @@ class EnvFindGoals(object):
     def reset(self):
         self.agt1_pos = [3, 1]
         self.agt2_pos = [6, 1]
+
         self.occupancy = [[1, 1, 1, 1],
                           [1, 1, 0, 1],
                           [1, 1, 0, 1],
@@ -314,8 +333,3 @@ class EnvFindGoals(object):
         ax2.imshow(self.get_agt1_obs())
         ax3.imshow(self.get_agt2_obs())
         plt.show()
-
-    def print_info(self):
-        print("agent 1 is at", self.agt1_pos)
-        print("agent 2 is at", self.agt2_pos)
-        print(" ")

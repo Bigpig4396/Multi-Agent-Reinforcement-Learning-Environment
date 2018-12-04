@@ -15,8 +15,8 @@ def print_action_freq(a_list):
         freq[0, int(a_list[k])] = freq[0, int(a_list[k])] + 1
     print(freq)
 
-max_opt_iter = 100
-max_MC_iter = 10000
+max_opt_iter = 500
+max_MC_iter = 1000
 max_test_iter = 200
 global_loss = []
 global_best = -100000
@@ -44,10 +44,7 @@ adam = Adam(lr=1e-4)
 model_2.compile(loss='mse', optimizer=adam)
 
 
-
-
-FINAL_EPSILON = 0.0001  # final value of epsilon
-
+annealing = 0.5
 for opt_iter in range(max_opt_iter):
     print("iteration ", opt_iter)
 
@@ -56,6 +53,8 @@ for opt_iter in range(max_opt_iter):
     batch_1 = [[], [], [], []]  # obs, q, a, r_1, r_2
     batch_2 = [[], [], [], []]
     done = 0
+    annealing = annealing * 0.95
+    print("annealing", annealing)
     for MC_iter in range(max_MC_iter):
 
         obs_1 = env.get_agt1_obs()
@@ -73,7 +72,10 @@ for opt_iter in range(max_opt_iter):
 
         # choose action with maximal Q value
 
-        a_1 = random.randint(0, action_num-1)
+        if random.random() < annealing:
+            a_1 = random.randint(0, action_num - 1)
+        else:
+            a_1 = np.argmax(q_1)
         a_2 = 4
 
         batch_1[2].append(a_1)
@@ -96,12 +98,12 @@ for opt_iter in range(max_opt_iter):
     print("episode length= ", datalen)
 
     target_1 = np.array(batch_1[1]).reshape((datalen, action_num))
-    for i in range(datalen - 1):
-        target_1[i][int(batch_1[2][i])] = batch_1[3][i] + 0.99 * np.max(batch_1[1][i + 1])
+    for i in range(datalen - 2, -1, -1):
+        target_1[i][int(batch_1[2][i])] = batch_1[3][i] + 0.99 * target_1[i+1][int(batch_1[2][i+1])]
 
     target_2 = np.array(batch_2[1]).reshape((datalen, action_num))
-    for i in range(datalen - 1):
-        target_2[i][int(batch_2[2][i])] = batch_2[3][i] + 0.99 * np.max(batch_1[1][i + 1])
+    for i in range(datalen - 2, -1, -1):
+        target_2[i][int(batch_2[2][i])] = batch_2[3][i] + 0.99 * np.max(batch_2[1][i + 1])
 
     train_x_1 = np.array(batch_1[0]).reshape((datalen, 3, 3, 3))
     train_x_2 = np.array(batch_2[0]).reshape((datalen, 3, 3, 3))
@@ -115,33 +117,7 @@ for opt_iter in range(max_opt_iter):
     # print_action_freq(batch_1[2])
     # print_action_freq(batch_2[2])
 
-
-
-
-    # test phase
-    env.reset()
-    a_1_list = []
-    a_2_list = []
-    acc_reward = 0
-    for test_iter in range(max_test_iter):
-
-        obs_1 = env.get_agt1_obs()
-        obs_2 = env.get_agt2_obs()
-
-        # predict Q value for each action
-        obs_1 = obs_1.reshape((1, 3, 3, 3))
-        obs_2 = obs_1.reshape((1, 3, 3, 3))
-        q_1 = model_1.predict(obs_1)
-        q_2 = model_2.predict(obs_2)
-
-        # choose action with maximal Q value
-        a_1 = np.argmax(q_1)
-        a_2 = 4
-        a_1_list.append(a_1)
-        a_2_list.append(a_2)
-        # excute action
-        reward_1, reward_2, obs_1, obs_2 = env.step(a_1, a_2)
-        acc_reward = acc_reward + reward_1 + reward_2
+    acc_reward = np.sum(batch_1[3])/datalen
 
     print("Accumulated Reward", acc_reward)
 
