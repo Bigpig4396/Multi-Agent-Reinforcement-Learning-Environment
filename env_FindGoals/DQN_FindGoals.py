@@ -1,5 +1,7 @@
+# just click run and see
 from env_FindGoals import EnvFindGoals
 from keras.models import Sequential
+from matplotlib.gridspec import GridSpec
 from keras.layers.core import Dense, Flatten, Activation
 from keras.layers.convolutional import Conv2D
 from keras.optimizers import Adam
@@ -15,9 +17,8 @@ def print_action_freq(a_list):
         freq[0, int(a_list[k])] = freq[0, int(a_list[k])] + 1
     print(freq)
 
-max_opt_iter = 500
-max_MC_iter = 1000
-max_test_iter = 200
+max_opt_iter = 100
+max_MC_iter = 100
 global_loss = []
 global_best = -100000
 action_num = 5
@@ -136,6 +137,25 @@ for opt_iter in range(max_opt_iter):
     print(" ")
 
 x = np.arange(0, max_opt_iter)
-plt.figure()
-plt.plot(x, global_loss)
-plt.show()
+fig = plt.figure()
+gs = GridSpec(2, 2, figure=fig)
+ax1 = fig.add_subplot(gs[0:1, 0:2])
+ax2 = fig.add_subplot(gs[1:2, 0:1])
+ax3 = fig.add_subplot(gs[1:2, 1:2])
+env.reset()
+for MC_iter in range(max_MC_iter):
+    print(MC_iter)
+    ax1.imshow(env.get_full_obs())
+    ax2.imshow(env.get_agt1_obs())
+    ax3.imshow(env.get_agt2_obs())
+    obs_1 = env.get_agt1_obs()
+    obs_2 = env.get_agt2_obs()
+    obs_1 = obs_1.reshape((1, 3, 3, 3))
+    obs_2 = obs_1.reshape((1, 3, 3, 3))
+    q_1 = model_1.predict(obs_1)
+    q_2 = model_2.predict(obs_2)
+    a_1 = np.argmax(q_1)
+    a_2 = np.argmax(q_2)
+    reward_1, reward_2, obs_1, obs_2 = env.step(a_1, a_2)
+    plt.pause(.5)
+    plt.draw()

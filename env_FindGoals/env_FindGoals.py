@@ -195,6 +195,24 @@ class EnvFindGoals(object):
             vec[2, 2, 2] = 0.0
         return vec
 
+    def get_full_obs(self):
+        obs = np.ones((4, 10, 3))
+        for i in range(4):
+            for j in range(10):
+                if self.occupancy[j][i] == 1:
+                    obs[3-i, j, 0] = 0
+                    obs[3-i, j, 1] = 0
+                    obs[3-i, j, 2] = 0
+                if [j, i] == self.agt1_pos:
+                    obs[3-i, j, 0] = 1
+                    obs[3-i, j, 1] = 0
+                    obs[3-i, j, 2] = 0
+                if [j, i] == self.agt2_pos:
+                    obs[3-i, j, 0] = 0
+                    obs[3-i, j, 1] = 0
+                    obs[3-i, j, 2] = 1
+        return obs
+
     def step(self, action1, action2):
         reward_1 = 0
         reward_2 = 0
@@ -307,29 +325,7 @@ class EnvFindGoals(object):
         ax1 = fig.add_subplot(gs[0:2, 0:2])
         ax2 = fig.add_subplot(gs[2, 0:1])
         ax3 = fig.add_subplot(gs[2, 1:2])
-
-        # plot grid
-        for k in range(10):
-            for j in range(4):
-                rect = plt.Rectangle((k, j), 1, 1, color='k', fill=False)
-                ax1.add_patch(rect)
-
-        # plot block
-        for k in range(10):
-            for j in range(4):
-                    if self.occupancy[k][j] == 1:
-                        rect = plt.Rectangle((k, j), 1, 1, color='k')
-                        ax1.add_patch(rect)
-
-        # plot agent
-        rect = plt.Rectangle((self.agt1_pos[0], self.agt1_pos[1]), 1, 1, color='r')
-        ax1.add_patch(rect)
-        rect = plt.Rectangle((self.agt2_pos[0], self.agt2_pos[1]), 1, 1, color='b')
-        ax1.add_patch(rect)
-
-        ax1.set_xlim([-1, 12])
-        ax1.set_ylim([-1, 6])
-
+        ax1.imshow(self.get_full_obs())
         ax2.imshow(self.get_agt1_obs())
         ax3.imshow(self.get_agt2_obs())
         plt.show()
