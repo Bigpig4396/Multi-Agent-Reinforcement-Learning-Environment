@@ -27,3 +27,7 @@ Hello, I pushed some python environments for Multi Agent Reinforcement Learning.
 
 ## Single Agent Maze Running
 ![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/SingleMaze.gif)
+
+
+## Navigation
+![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/Navigation.gif)
