@@ -205,7 +205,7 @@ class Player(object):
         if action_index == 0:   # kick [,], const
             self.vel = self.vec_mul_const(self.vel, 0.8)
             self.regulate_speed()
-            ori_vec = self.vec_rotate([1, 0], self.theta)
+            ori_vec = self.vec_rotate([1, 0], -self.theta)
             kick_angle = self.vec_angle(ori_vec, action_vector)
             kick_angle = self.bound_angle(kick_angle)
             kick_angle = abs(kick_angle)
@@ -220,7 +220,7 @@ class Player(object):
         if action_index == 2:   # run [,], const
             temp_vel = self.vec_normalize(action_vector)
             temp_vel = self.vec_mul_const(temp_vel, action_const)
-            ori_vec = self.vec_rotate([1, 0], self.theta)
+            ori_vec = self.vec_rotate([1, 0], -self.theta)
             kick_angle = self.vec_angle(ori_vec, action_vector)
             kick_angle = self.bound_angle(kick_angle)
             kick_angle = abs(kick_angle)
@@ -237,7 +237,7 @@ class Player(object):
         if action_index == 4:   # run with ball [,], const
             temp_vel = self.vec_normalize(action_vector)
             temp_vel = self.vec_mul_const(temp_vel, action_const)
-            ori_vec = self.vec_rotate([1, 0], self.theta)
+            ori_vec = self.vec_rotate([1, 0], -self.theta)
             kick_angle = self.vec_angle(ori_vec, action_vector)
             kick_angle = self.bound_angle(kick_angle)
             kick_angle = abs(kick_angle)
@@ -401,16 +401,16 @@ class EnvSoccer(object):
 
         for i in range(len(self.player_list)):
             if self.player_list[i].team == 0:
-                temp_redbot_img = self.redbot_img.rotate(self.player_list[i].theta)
+                temp_redbot_img = self.redbot_img.rotate(-self.player_list[i].theta)
                 draw = ImageDraw.Draw(temp_redbot_img)
-                ttfront = ImageFont.truetype('simhei.ttf', 30)  # 字体大小
+                ttfront = ImageFont.truetype('simhei.ttf', 30)
                 draw.text((30, 22), str(self.player_list[i].role), (255, 255, 0), font=ttfront)
                 r, g, b, alpha = temp_redbot_img.split()
                 obs.paste(temp_redbot_img, (round(self.player_list[i].pos[0] - 40), round(self.player_list[i].pos[1] - 40)), mask=alpha)
             if self.player_list[i].team == 1:
-                temp_bluebot_img = self.bluebot_img.rotate(self.player_list[i].theta)
+                temp_bluebot_img = self.bluebot_img.rotate(-self.player_list[i].theta)
                 draw = ImageDraw.Draw(temp_bluebot_img)
-                ttfront = ImageFont.truetype('simhei.ttf', 30)  # 字体大小
+                ttfront = ImageFont.truetype('simhei.ttf', 30)
                 draw.text((30, 22), str(self.player_list[i].role), (255, 255, 0), font=ttfront)
                 r, g, b, alpha = temp_bluebot_img.split()
                 obs.paste(temp_bluebot_img, (round(self.player_list[i].pos[0] - 40), round(self.player_list[i].pos[1] - 40)), mask=alpha)
@@ -423,13 +423,13 @@ class EnvSoccer(object):
             return []
         else:
             obs = self.get_global_obs()
-            ori_vec = self.vec_rotate([1, 0], self.player_list[index].theta)
+            ori_vec = self.vec_rotate([1, 0], -self.player_list[index].theta)
             img = Image.fromarray(obs).convert('RGB')
             draw = ImageDraw.Draw(img)
             x = self.player_list[index].pos[0]
             y = self.player_list[index].pos[1]
             theta = self.player_list[index].theta
-            draw.pieslice((x - 800, y - 800, x + 800, y + 800),  -theta + self.player_list[index].view_angle, -theta - self.player_list[index].view_angle, fill=(149, 149, 149))
+            draw.pieslice((x - 800, y - 800, x + 800, y + 800), theta + self.player_list[index].view_angle,  theta - self.player_list[index].view_angle, fill=(149, 149, 149))
             obs = np.array(img)
             return obs
 
