@@ -36,21 +36,28 @@ Hello, I pushed some python environments for Multi Agent Reinforcement Learning.
 ##Multi-Agent Environment Standard
 
 **Assumption:**
+
 Each agent works synchronously.
 
+
 **Member Variable**
-	self.env_type = 'periodic'/'episodic'
+
+self.env_type = 'periodic'/'episodic'
+
 
 **Member Functions**
+
 reset()
 reward_list = step(action_list)
 obs_list = get_obs()
+
 
 <font color=Blue>reward_list</font> records the single step reward for each agent, it should be a list like [reward1, 	reward2,...]. The length should be the same as the number of agents. Each element in the 	list should be a integer.
 
 <font color=Blue>action_list</font> records the single step action instruction for each agent, it should be a list like [action1, 	action2,...]. The length should be the same as the number of agents. Each element in the 	list should be a non-negative integer.
 
 <font color=Blue>obs_list</font> records the single step observation for each agent, it should be a list like [obs1, obs2,...]. The length should be the same as the number of agents. Each element in the 	list can be any form of data, but should be in same dimension, usually a list of variables or 	an image.
+
 
 **Typical Monte Carlo Procedures**
 
