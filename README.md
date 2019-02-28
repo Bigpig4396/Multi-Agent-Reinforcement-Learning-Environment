@@ -52,10 +52,10 @@ obs_list = get_obs()
 <font color=Blue>obs_list</font> records the single step observation for each agent, it should be a list like [obs1, obs2,...]. The length should be the same as the number of agents. Each element in the 	list can be any form of data, but should be in same dimension, usually a list of variables or 	an image.
 
 **Typical Monte Carlo Procedures**
-<font color=Blue>reset environment by calling reset()
+reset environment by calling reset()
 get initial observation get_obs()
 for i in range(max_MC_iter):
   get action_list from controller
   apply action by step()
   record returned reward list
-  record new observation by get_obs()</font>
+  record new observation by get_obs()
