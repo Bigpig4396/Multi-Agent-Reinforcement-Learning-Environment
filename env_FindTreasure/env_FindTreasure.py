@@ -77,13 +77,13 @@ class EnvFindTreasure(object):
         self.treasure_pos = [8, 8]
         self.occupancy[8][8] = 1
 
-    def step(self, action1, action2):
+    def step(self, action_list):
         self.lever_pos = [6, 3]
         self.treasure_pos = [8, 8]
         reward_1 = 0
         reward_2 = 0
         # agent1 move
-        if action1 == 0:  # move up
+        if action_list[0] == 0:  # move up
             reward_1 = reward_1 - 1
             if self.occupancy[self.agt1_pos[0]][self.agt1_pos[1] + 1] != 1:  # if can move
                 self.agt1_pos[1] = self.agt1_pos[1] + 1
@@ -91,7 +91,7 @@ class EnvFindTreasure(object):
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
             else:
                 reward_1 = reward_1 - 20
-        elif action1 == 1:  # move down
+        elif action_list[0] == 1:  # move down
             reward_1 = reward_1 - 1
             if self.occupancy[self.agt1_pos[0]][self.agt1_pos[1] - 1] != 1:  # if can move
                 self.agt1_pos[1] = self.agt1_pos[1] - 1
@@ -99,7 +99,7 @@ class EnvFindTreasure(object):
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
             else:
                 reward_1 = reward_1 - 20
-        elif action1 == 2:  # move left
+        elif action_list[0] == 2:  # move left
             reward_1 = reward_1 - 1
             if self.occupancy[self.agt1_pos[0] - 1][self.agt1_pos[1]] != 1:  # if can move
                 self.agt1_pos[0] = self.agt1_pos[0] - 1
@@ -107,7 +107,7 @@ class EnvFindTreasure(object):
                 self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
             else:
                 reward_1 = reward_1 - 20
-        elif action1 == 3:  # move right
+        elif action_list[0] == 3:  # move right
             reward_1 = reward_1 - 1
             if self.occupancy[self.agt1_pos[0] + 1][self.agt1_pos[1]] != 1:  # if can move
                 self.agt1_pos[0] = self.agt1_pos[0] + 1
@@ -117,7 +117,7 @@ class EnvFindTreasure(object):
                 reward_1 = reward_1 - 20
 
         # agent2 move
-        if action2 == 0:  # move up
+        if action_list[1] == 0:  # move up
             reward_2 = reward_2 - 1
             if self.occupancy[self.agt2_pos[0]][self.agt2_pos[1] + 1] != 1:  # if can move
                 self.agt2_pos[1] = self.agt2_pos[1] + 1
@@ -125,7 +125,7 @@ class EnvFindTreasure(object):
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
             else:
                 reward_2 = reward_2 - 20
-        elif action2 == 1:  # move down
+        elif action_list[1] == 1:  # move down
             reward_2 = reward_2 - 1
             if self.occupancy[self.agt2_pos[0]][self.agt2_pos[1] - 1] != 1:  # if can move
                 self.agt2_pos[1] = self.agt2_pos[1] - 1
@@ -133,7 +133,7 @@ class EnvFindTreasure(object):
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
             else:
                 reward_2 = reward_2 - 20
-        elif action2 == 2:  # move left
+        elif action_list[1] == 2:  # move left
             reward_2 = reward_2 - 1
             if self.occupancy[self.agt2_pos[0] - 1][self.agt2_pos[1]] != 1:  # if can move
                 self.agt2_pos[0] = self.agt2_pos[0] - 1
@@ -141,7 +141,7 @@ class EnvFindTreasure(object):
                 self.occupancy[self.agt2_pos[0]][self.agt2_pos[1]] = 1
             else:
                 reward_2 = reward_2 - 20
-        elif action2 == 3:  # move right
+        elif action_list[1] == 3:  # move right
             reward_2 = reward_2 - 1
             if self.occupancy[self.agt2_pos[0] + 1][self.agt2_pos[1]] != 1:  # if can move
                 self.agt2_pos[0] = self.agt2_pos[0] + 1
@@ -162,9 +162,11 @@ class EnvFindTreasure(object):
             reward_2 = reward_2 + 100
             self.reset()
 
-        obs_1 = self.get_agt1_obs()
-        obs_2 = self.get_agt2_obs()
-        return reward_1, reward_2, obs_1, obs_2
+        done = False
+        if reward_1 > 0:
+            done = True
+
+        return [reward_1, reward_2], done
 
     def get_agt1_obs(self):
         obs_1 = np.zeros((10, 10, 3))
@@ -273,6 +275,9 @@ class EnvFindTreasure(object):
         obs_2[9 - y, x, 1] = 1
         obs_2[9 - y, x, 2] = 0
         return obs_2
+
+    def get_obs(self):
+        return [self.get_agt1_obs(), self.get_agt2_obs()]
 
     def get_full_obs(self):
         obs_2 = np.zeros((10, 10, 3))

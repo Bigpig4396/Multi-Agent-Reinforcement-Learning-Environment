@@ -574,7 +574,10 @@ class EnvCatchPigs(object):
 
         return obs
 
-    def get_global_obs(self):
+    def get_obs(self):
+        return [self.get_agt1_obs(), self.get_agt2_obs()]
+
+    def get_full_obs(self):
         obs = np.zeros((self.map_size*3, self.map_size*3, 3))
         for i in range(self.map_size*3):
             for j in range(self.map_size*3):
@@ -590,13 +593,13 @@ class EnvCatchPigs(object):
         self.paint_pig(obs, self.map_size - self.pig_pos[1] - 1, self.pig_pos[0], self.pig_ori)
         return obs
 
-    def step(self, action1, action2, action_pig):
+    def step(self, action_list):
         reward_1 = 0
         reward_2 = 0
         reward_pig = 0
 
         # agent1 move
-        if action1 == 0:    # turn left
+        if action_list[0] == 0:    # turn left
             reward_1 = reward_1 - 1
             if self.agt1_ori == 0:
                 self.agt1_ori = 3
@@ -607,7 +610,7 @@ class EnvCatchPigs(object):
             elif self.agt1_ori == 3:
                 self.agt1_ori = 2
 
-        elif action1 == 1:  # turn right
+        elif action_list[0] == 1:  # turn right
             reward_1 = reward_1 - 1
             if self.agt1_ori == 0:
                 self.agt1_ori = 1
@@ -618,7 +621,7 @@ class EnvCatchPigs(object):
             elif self.agt1_ori == 3:
                 self.agt1_ori = 0
 
-        elif action1 == 2:  # move
+        elif action_list[0] == 2:  # move
             reward_1 = reward_1 - 1
             if self.agt1_ori == 0:
                 if self.occupancy[self.agt1_pos[0] - 1][self.agt1_pos[1]] != 1:  # if can move
@@ -649,7 +652,7 @@ class EnvCatchPigs(object):
                 else:
                     reward_1 = reward_1 - 20
 
-        elif action1 == 3:  # catch
+        elif action_list[0] == 3:  # catch
             reward_1 = reward_1 - 1
             if self.agt1_ori == 0:
                 if self.pig_pos[0] == self.agt1_pos[0]-1:
@@ -669,7 +672,7 @@ class EnvCatchPigs(object):
                         self.if_agt1_catches = True
 
         # agent2 move
-        if action2 == 0:    # turn left
+        if action_list[1] == 0:    # turn left
             reward_2 = reward_2 - 1
             if self.agt2_ori == 0:
                 self.agt2_ori = 3
@@ -680,7 +683,7 @@ class EnvCatchPigs(object):
             elif self.agt2_ori == 3:
                 self.agt2_ori = 2
 
-        elif action2 == 1:  # turn right
+        elif action_list[1] == 1:  # turn right
             reward_2 = reward_2 - 1
             if self.agt2_ori == 0:
                 self.agt2_ori = 1
@@ -691,7 +694,7 @@ class EnvCatchPigs(object):
             elif self.agt2_ori == 3:
                 self.agt2_ori = 0
 
-        elif action2 == 2:  # move
+        elif action_list[1] == 2:  # move
             reward_2 = reward_2 - 1
             if self.agt2_ori == 0:
                 if self.occupancy[self.agt2_pos[0] - 1][self.agt2_pos[1]] != 1:  # if can move
@@ -722,7 +725,7 @@ class EnvCatchPigs(object):
                 else:
                     reward_2 = reward_2 - 20
 
-        elif action2 == 3:  # catch
+        elif action_list[1] == 3:  # catch
             reward_2 = reward_2 - 1
             if self.agt2_ori == 0:
                 if self.pig_pos[0] == self.agt2_pos[0]-1:
@@ -742,6 +745,7 @@ class EnvCatchPigs(object):
                         self.if_agt2_catches = True
 
         # pig move
+        action_pig = random.randint(0,3)
         if action_pig == 0:  # turn left
             reward_pig = reward_pig - 1
             if self.pig_ori == 0:
@@ -810,27 +814,35 @@ class EnvCatchPigs(object):
             reward_pig = reward_pig - 500
             self.reset()
         else:
-            if action2 == 3:
+            if action_list[1] == 3:
                 reward_2 = reward_2 - 50
-            if action1 == 3:
+            if action_list[0] == 3:
                 reward_1 = reward_1 - 50
 
         self.if_agt1_catches = False
         self.if_agt2_catches = False
-        obs_1 = self.get_agt1_obs()
-        obs_2 = self.get_agt2_obs()
-        obs_pig = self.get_pig_obs()
-        return reward_1, reward_2, reward_pig, obs_1, obs_2, obs_pig
+        done = False
+        if reward_1>0:
+            done = True
+        return [reward_1, reward_2], done
 
     def plot_scene(self):
-        fig = plt.figure(figsize=(8, 8))
+        fig = plt.figure(figsize=(5, 5))
         gs = GridSpec(3, 3, figure=fig)
         ax1 = fig.add_subplot(gs[0:2, 0:3])
+        plt.xticks([])
+        plt.yticks([])
         ax2 = fig.add_subplot(gs[2, 0:1])
+        plt.xticks([])
+        plt.yticks([])
         ax3 = fig.add_subplot(gs[2, 1:2])
+        plt.xticks([])
+        plt.yticks([])
         ax4 = fig.add_subplot(gs[2, 2:3])
+        plt.xticks([])
+        plt.yticks([])
 
-        ax1.imshow(self.get_global_obs())
+        ax1.imshow(self.get_full_obs())
         ax2.imshow(self.get_agt1_obs())
         ax3.imshow(self.get_agt2_obs())
         ax4.imshow(self.get_pig_obs())

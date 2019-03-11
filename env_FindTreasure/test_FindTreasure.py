@@ -1,16 +1,16 @@
 from env_FindTreasure import EnvFindTreasure
 import random
 
-env = EnvFindTreasure()
+if __name__ == '__main__':
+    env = EnvFindTreasure()
 
-max_iter = 1000
-for i in range(max_iter):
-    print("iter= ", i)
-    reward_1, reward_2, obs_1, obs_2 = env.step(random.randint(0, 4), random.randint(0, 4))
-    print(env.agt1_pos)
-    print(env.agt2_pos)
+    max_iter = 1000
+    for i in range(max_iter):
+        print("iter= ", i)
+        action_list = [random.randint(0, 4), random.randint(0, 4)]
+        reward_list, done = env.step(action_list)
 
-    env.plot_scene()
+        env.plot_scene()
 
 
 
