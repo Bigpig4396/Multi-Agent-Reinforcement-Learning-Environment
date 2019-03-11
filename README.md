@@ -40,11 +40,6 @@ Hello, I pushed some python environments for Multi Agent Reinforcement Learning.
 Each agent works synchronously.
 
 
-**Member Variable**
-
-self.env_type = 'periodic'/'episodic'
-
-
 **Member Functions**
 
 reset()
