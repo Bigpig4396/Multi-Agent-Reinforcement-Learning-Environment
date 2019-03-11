@@ -43,11 +43,16 @@ Each agent works synchronously.
 **Member Functions**
 
 reset()
-reward_list = step(action_list)
+
+reward_list, done = step(action_list)
+
 obs_list = get_obs()
 
 
-<font color=Blue>reward_list</font> records the single step reward for each agent, it should be a list like [reward1, 	reward2,...]. The length should be the same as the number of agents. Each element in the 	list should be a integer.
+
+reward_list records the single step reward for each agent, it should be a list like [reward1, 	reward2,......]. The length should be the same as the number of agents. Each element in the 	list should be a integer.
+
+done True/False, mark when an episode finishes.
 
 <font color=Blue>action_list</font> records the single step action instruction for each agent, it should be a list like [action1, 	action2,...]. The length should be the same as the number of agents. Each element in the 	list should be a non-negative integer.
 
