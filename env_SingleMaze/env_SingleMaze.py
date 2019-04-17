@@ -183,5 +183,5 @@ class EnvSingleMaze(object):
         ax2 = fig.add_subplot(gs[2, 0:1])
 
         ax1.imshow(self.get_global_obs())
-        ax2.imshow(self.get_agt1_obs())
+        ax2.imshow(self.get_obs())
         plt.show()
