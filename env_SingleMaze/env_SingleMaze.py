@@ -151,7 +151,6 @@ class EnvSingleMaze(object):
             self.occupancy[self.agt1_pos[0]][self.agt1_pos[1]] = 1
             reward_1 = reward_1 + 50
 
-        obs_1 = self.get_agt1_obs()
         done = False
         if reward_1 > 0:
             done = True
