@@ -1,7 +1,7 @@
 from env_SingleMaze import EnvSingleMaze
 import random
 
-env = EnvSingleMaze(True)
+env = EnvSingleMaze()
 max_iter = 10000
 for i in range(max_iter):
     a_1 = random.randint(0, 3)
