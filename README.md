@@ -1,7 +1,5 @@
 # Multi-Agent-Learning-Environments
 Hello, I pushed some python environments for Multi Agent Reinforcement Learning. Some are single agent version that can be used for algorithm testing. I provide documents for each environment, you can check the corresponding pdf files in each directory. Some environments are like:
-## Dependency
-OpenCV
 
 
 ## Multi Agent Soccer Game
@@ -38,6 +36,10 @@ OpenCV
 
 ## Navigation
 ![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/Navigation.gif)
+
+
+## Dependency
+OpenCV
 
 
 ##Multi-Agent Environment Standard
