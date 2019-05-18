@@ -10,6 +10,10 @@ Hello, I pushed some python environments for Multi Agent Reinforcement Learning.
 ![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/Rescue.gif)
 
 
+## Multi Agent Rescue
+![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/MoveBox.gif)
+
+
 ## Multi Agent Catching Pig
 ![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/CatchPigs.gif)
 
