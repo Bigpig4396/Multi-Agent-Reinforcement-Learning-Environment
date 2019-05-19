@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 import random
+import cv2
 
 class EnvSingleCatchPigs(object):
 
@@ -477,3 +478,47 @@ class EnvSingleCatchPigs(object):
             self.pig_pos = tgt_pos
             self.occupancy[self.pig_pos[0]][self.pig_pos[1]] = 1
             self.pig_ori = tgt_ori
+
+    def render(self):
+        obs = np.ones((self.map_size*21, self.map_size*21, 3))
+        for i in range(self.map_size):
+            for j in range(self.map_size):
+                if self.raw_occupancy[i, j] == 1:
+                    cv2.rectangle(obs, (i*21, j*21), (i*21+21, j*21+21), (0, 0, 0), -1)
+        # plot agent1
+        temp_x = self.agt1_pos[0]
+        temp_y = self.map_size - self.agt1_pos[1] - 1
+        if self.agt1_ori == 0:
+            cv2.rectangle(obs, (temp_x * 21, temp_y * 21), (temp_x * 21 + 7, temp_y * 21 + 21), (0, 0, 255), -1)
+            cv2.rectangle(obs, (temp_x * 21 + 7, temp_y * 21 + 7), (temp_x * 21 + 21, temp_y * 21 + 14), (0, 0, 255),
+                          -1)
+        elif self.agt1_ori==1:
+            cv2.rectangle(obs, (temp_x * 21, temp_y * 21), (temp_x * 21 + 21, temp_y * 21 + 7), (0, 0, 255), -1)
+            cv2.rectangle(obs, (temp_x * 21 + 7, temp_y * 21 + 7), (temp_x * 21 + 14, temp_y * 21 + 21), (0, 0, 255),
+                          -1)
+        elif self.agt1_ori == 2:
+            cv2.rectangle(obs, (temp_x * 21, temp_y * 21 + 7), (temp_x * 21 + 14, temp_y * 21 + 14), (0, 0, 255), -1)
+            cv2.rectangle(obs, (temp_x * 21 + 14, temp_y * 21), (temp_x * 21 + 21, temp_y * 21 + 21), (0, 0, 255), -1)
+        else:
+            cv2.rectangle(obs, (temp_x * 21, temp_y * 21 + 14), (temp_x * 21 + 21, temp_y * 21 + 21), (0, 0, 255), -1)
+            cv2.rectangle(obs, (temp_x * 21 + 7, temp_y * 21), (temp_x * 21 + 14, temp_y * 21 + 14), (0, 0, 255), -1)
+
+        # plot pig
+        temp_x = self.pig_pos[0]
+        temp_y = self.map_size - self.pig_pos[1] - 1
+        if self.pig_ori == 0:
+            cv2.rectangle(obs, (temp_x * 21, temp_y * 21), (temp_x * 21 + 7, temp_y * 21 + 21), (0, 255, 0), -1)
+            cv2.rectangle(obs, (temp_x * 21 + 7, temp_y * 21 + 7), (temp_x * 21 + 21, temp_y * 21 + 14), (0, 255, 0),
+                          -1)
+        elif self.pig_ori == 1:
+            cv2.rectangle(obs, (temp_x * 21, temp_y * 21), (temp_x * 21 + 21, temp_y * 21 + 7), (0, 255, 0), -1)
+            cv2.rectangle(obs, (temp_x * 21 + 7, temp_y * 21 + 7), (temp_x * 21 + 14, temp_y * 21 + 21), (0, 255, 0),
+                          -1)
+        elif self.pig_ori == 2:
+            cv2.rectangle(obs, (temp_x * 21, temp_y * 21 + 7), (temp_x * 21 + 14, temp_y * 21 + 14), (0, 255, 0), -1)
+            cv2.rectangle(obs, (temp_x * 21 + 14, temp_y * 21), (temp_x * 21 + 21, temp_y * 21 + 21), (0, 255, 0), -1)
+        else:
+            cv2.rectangle(obs, (temp_x * 21, temp_y * 21 + 14), (temp_x * 21 + 21, temp_y * 21 + 21), (0, 255, 0), -1)
+            cv2.rectangle(obs, (temp_x * 21 + 7, temp_y * 21), (temp_x * 21 + 14, temp_y * 21 + 14), (0, 255, 0), -1)
+        cv2.imshow('image', obs)
+        cv2.waitKey(50)
