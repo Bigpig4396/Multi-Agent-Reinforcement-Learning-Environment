@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
-
+import cv2
 
 class EnvFindGoals(object):
 
@@ -340,3 +340,14 @@ class EnvFindGoals(object):
         ax3.imshow(self.get_agt2_obs())
 
         plt.show()
+
+    def render(self):
+        obs = np.ones((4 * 20, 10 * 20, 3))
+        for i in range(10):
+            for j in range(4):
+                if self.occupancy[i][j] == 1:
+                    cv2.rectangle(obs, (i*20, (3-j)*20), (i*20+20, (3-j)*20+20), (0, 0, 0), -1)
+        cv2.rectangle(obs, (self.agt2_pos[0] * 20, (3-self.agt2_pos[1]) * 20), (self.agt2_pos[0] * 20 + 20, (3-self.agt2_pos[1]) * 20 + 20), (255, 0, 0), -1)
+        cv2.rectangle(obs, (self.agt1_pos[0] * 20, (3-self.agt1_pos[1]) * 20), (self.agt1_pos[0] * 20 + 20, (3-self.agt1_pos[1]) * 20 + 20), (0, 0, 255), -1)
+        cv2.imshow('image', obs)
+        cv2.waitKey(10)
