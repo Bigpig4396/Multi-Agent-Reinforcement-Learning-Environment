@@ -6,7 +6,7 @@ max_iter = 10000
 for i in range(max_iter):
     a_1 = random.randint(0, 3)
     print("action", a_1)
-    env.plot_scene()
+    env.render()
     reward_1, obs_1 = env.step(a_1)
     if reward_1 > 0:
         print("iter= ", i)

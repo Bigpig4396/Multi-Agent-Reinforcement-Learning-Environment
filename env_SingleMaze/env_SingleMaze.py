@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
-
+import cv2
 
 class EnvSingleMaze(object):
 
@@ -185,3 +185,18 @@ class EnvSingleMaze(object):
         ax1.imshow(self.get_global_obs())
         ax2.imshow(self.get_obs())
         plt.show()
+
+    def render(self):
+        obs = np.ones((13 * 20, 13 * 20, 3))
+        for i in range(13):
+            for j in range(13):
+                if self.occupancy[i][j] == 1:
+                    cv2.rectangle(obs, (i*20, (12-j)*20), (i*20+20, (12-j)*20+20), (0, 0, 0), -1)
+        cv2.rectangle(obs, (self.dest1[1] * 20, (12-self.dest1[0]) * 20),
+                      (self.dest1[1] * 20 + 20, (12-self.dest1[0]) * 20 + 20), (0, 255, 255), -1)
+        cv2.rectangle(obs, (self.agt1_pos[0] * 20, (12-self.agt1_pos[1]) * 20),
+                      (self.agt1_pos[0] * 20 + 20, (12-self.agt1_pos[1]) * 20 + 20), (0, 0, 255), -1)
+        cv2.imshow('image', obs)
+        cv2.waitKey(10)
+
+
