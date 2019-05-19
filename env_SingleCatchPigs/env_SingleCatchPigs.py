@@ -521,4 +521,4 @@ class EnvSingleCatchPigs(object):
             cv2.rectangle(obs, (temp_x * 21, temp_y * 21 + 14), (temp_x * 21 + 21, temp_y * 21 + 21), (0, 255, 0), -1)
             cv2.rectangle(obs, (temp_x * 21 + 7, temp_y * 21), (temp_x * 21 + 14, temp_y * 21 + 14), (0, 255, 0), -1)
         cv2.imshow('image', obs)
-        cv2.waitKey(50)
+        cv2.waitKey(10)
