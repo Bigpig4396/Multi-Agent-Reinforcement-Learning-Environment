@@ -372,4 +372,4 @@ class EnvMoveBox(object):
         cv2.rectangle(obs, (self.box_pos[1] * 20, self.box_pos[0] * 20),
                       (self.box_pos[1] * 20 + 20, self.box_pos[0] * 20 + 20), (0, 255, 0), -1)
         cv2.imshow('image', obs)
-        cv2.waitKey(50)
+        cv2.waitKey(10)
