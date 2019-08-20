@@ -45,7 +45,7 @@ Hello, I pushed some python environments for Multi Agent Reinforcement Learning.
 
 
 ## Dependency
-OpenCV
+OpenCV, swig
 
 
 ## Multi-Agent Environment Standard
