@@ -6,33 +6,47 @@ import cv2
 
 class EnvMoveBox(object):
     def __init__(self):
-        self.raw_occupancy = np.zeros((17, 17))
-        for i in range(17):
+        self.raw_occupancy = np.zeros((15, 15))
+        for i in range(15):
             self.raw_occupancy[0, i] = 1
             self.raw_occupancy[i, 0] = 1
-            self.raw_occupancy[16, i] = 1
-            self.raw_occupancy[i, 16] = 1
             self.raw_occupancy[14, i] = 1
-        self.raw_occupancy[10, 5] = 1
-        self.raw_occupancy[10, 6] = 1
-        self.raw_occupancy[10, 7] = 1
-        self.raw_occupancy[10, 8] = 1
-        self.raw_occupancy[10, 9] = 1
-        self.raw_occupancy[10, 10] = 1
-        self.raw_occupancy[10, 11] = 1
-        self.raw_occupancy[0, 7] = 0
-        self.raw_occupancy[0, 8] = 0
-        self.raw_occupancy[0, 9] = 0
-        self.raw_occupancy[14, 8] = 0
+            self.raw_occupancy[i, 14] = 1
+            self.raw_occupancy[1, i] = 1
+            self.raw_occupancy[5, i] = 1
+            self.raw_occupancy[6, i] = 1
+        self.raw_occupancy[1, 6] = 0
+        self.raw_occupancy[1, 7] = 0
+        self.raw_occupancy[1, 8] = 0
+        self.raw_occupancy[5, 1] = 0
+        self.raw_occupancy[5, 2] = 0
+        self.raw_occupancy[5, 3] = 0
+        self.raw_occupancy[5, 4] = 0
+        self.raw_occupancy[6, 1] = 0
+        self.raw_occupancy[6, 2] = 0
+        self.raw_occupancy[6, 3] = 0
+        self.raw_occupancy[6, 4] = 0
+        self.raw_occupancy[6, 6] = 0
+        self.raw_occupancy[6, 7] = 0
+        self.raw_occupancy[6, 8] = 0
+        self.raw_occupancy[11, 6] = 1
+        self.raw_occupancy[11, 7] = 1
+        self.raw_occupancy[11, 8] = 1
+        self.raw_occupancy[12, 6] = 1
+        self.raw_occupancy[12, 7] = 1
+        self.raw_occupancy[12, 8] = 1
+        self.raw_occupancy[13, 6] = 1
+        self.raw_occupancy[13, 7] = 1
+        self.raw_occupancy[13, 8] = 1
 
         self.occupancy = self.raw_occupancy.copy()
 
-        self.agt1_pos = [15, 1]
+        self.agt1_pos = [13, 1]
         self.occupancy[self.agt1_pos[0], self.agt1_pos[1]] = 1
-        self.agt2_pos = [15, 15]
+        self.agt2_pos = [13, 13]
         self.occupancy[self.agt2_pos[0], self.agt2_pos[1]] = 1
 
-        self.box_pos = [11, 8]
+        self.box_pos = [10, 7]
         self.occupancy[self.box_pos[0], self.box_pos[1]] = 1
 
         self.is_1_catch_box = False
@@ -41,16 +55,14 @@ class EnvMoveBox(object):
     def reset(self):
         self.occupancy = self.raw_occupancy.copy()
 
-        self.agt1_pos = [15, 1]
+        self.agt1_pos = [13, 1]
         self.occupancy[self.agt1_pos[0], self.agt1_pos[1]] = 1
-        self.agt2_pos = [15, 15]
+        self.agt2_pos = [13, 13]
         self.occupancy[self.agt2_pos[0], self.agt2_pos[1]] = 1
 
-        self.box_pos = [11, 8]
+        self.box_pos = [10, 7]
         self.occupancy[self.box_pos[0], self.box_pos[1]] = 1
 
-        self.is_caught_by_1 = False
-        self.is_caught_by_2 = False
         self.is_1_catch_box = False
         self.is_2_catch_box = False
 
@@ -143,67 +155,26 @@ class EnvMoveBox(object):
         if self.agt2_pos[0] == self.box_pos[0] and abs(self.agt2_pos[1] - self.box_pos[1]) == 1:
             self.is_2_catch_box = True
 
-        reward_list = [0, 0]
-        if self.box_pos == [0, 8]:
-            reward_list = [100, 100]
+        done = False
+        reward = 0
+        if self.box_pos == [6, 7]:
+            reward = 10
+            done = True
             self.reset()
-        return reward_list
+        if self.box_pos == [1, 7]:
+            reward = 100
+            done = True
+            self.reset()
+        return reward, done
 
     def get_global_obs(self):
-        obs = np.ones((17, 17, 3))
-        for i in range(17):
-            obs[0, i, 0] = 0
-            obs[i, 0, 0] = 0
-            obs[16, i, 0] = 0
-            obs[i, 16, 0] = 0
-            obs[14, i, 0] = 0
-            obs[0, i, 1] = 0
-            obs[i, 0, 1] = 0
-            obs[16, i, 1] = 0
-            obs[i, 16, 1] = 0
-            obs[14, i, 1] = 0
-            obs[0, i, 2] = 0
-            obs[i, 0, 2] = 0
-            obs[16, i, 2] = 0
-            obs[i, 16, 2] = 0
-            obs[14, i, 2] = 0
-        obs[10, 5, 0] = 0
-        obs[10, 6, 0] = 0
-        obs[10, 7, 0] = 0
-        obs[10, 8, 0] = 0
-        obs[10, 9, 0] = 0
-        obs[10, 10, 0] = 0
-        obs[10, 11, 0] = 0
-        obs[0, 7, 0] = 1
-        obs[0, 8, 0] = 1
-        obs[0, 9, 0] = 1
-        obs[14, 8, 0] = 1
-        obs[10, 5, 1] = 0
-        obs[10, 6, 1] = 0
-        obs[10, 7, 1] = 0
-        obs[10, 8, 1] = 0
-        obs[10, 9, 1] = 0
-        obs[10, 10, 1] = 0
-        obs[10, 11, 1] = 0
-        obs[0, 7, 1] = 1
-        obs[0, 8, 1] = 1
-        obs[0, 9, 1] = 1
-        obs[14, 8, 1] = 1
-        obs[10, 5, 2] = 0
-        obs[10, 6, 2] = 0
-        obs[10, 7, 2] = 0
-        obs[10, 8, 2] = 0
-        obs[10, 9, 2] = 0
-        obs[10, 10, 2] = 0
-        obs[10, 11, 2] = 0
-        obs[0, 7, 2] = 1
-        obs[0, 8, 2] = 1
-        obs[0, 9, 2] = 1
-        obs[14, 8, 2] = 1
-        obs[0, 8, 2] = 1
-        obs[0, 9, 2] = 1
-        obs[14, 8, 2] = 1
-
+        obs = np.ones((15, 15, 3))
+        for i in range(15):
+            for j in range(15):
+                if self.raw_occupancy[i, j] == 1:
+                    obs[i, j, 0] = 0.0
+                    obs[i, j, 1] = 0.0
+                    obs[i, j, 2] = 0.0
         obs[self.agt1_pos[0], self.agt1_pos[1], 0] = 1
         obs[self.agt1_pos[0], self.agt1_pos[1], 1] = 0
         obs[self.agt1_pos[0], self.agt1_pos[1], 2] = 0
@@ -218,132 +189,64 @@ class EnvMoveBox(object):
         return obs
 
     def get_agt1_obs(self):
-        obs = np.ones((17, 17, 3))
-        for i in range(17):
-            obs[0, i, 0] = 0
-            obs[i, 0, 0] = 0
-            obs[16, i, 0] = 0
-            obs[i, 16, 0] = 0
-            obs[14, i, 0] = 0
-            obs[0, i, 1] = 0
-            obs[i, 0, 1] = 0
-            obs[16, i, 1] = 0
-            obs[i, 16, 1] = 0
-            obs[14, i, 1] = 0
-            obs[0, i, 2] = 0
-            obs[i, 0, 2] = 0
-            obs[16, i, 2] = 0
-            obs[i, 16, 2] = 0
-            obs[14, i, 2] = 0
-        obs[10, 5, 0] = 0
-        obs[10, 6, 0] = 0
-        obs[10, 7, 0] = 0
-        obs[10, 8, 0] = 0
-        obs[10, 9, 0] = 0
-        obs[10, 10, 0] = 0
-        obs[10, 11, 0] = 0
-        obs[0, 7, 0] = 1
-        obs[0, 8, 0] = 1
-        obs[0, 9, 0] = 1
-        obs[14, 8, 0] = 1
-        obs[10, 5, 1] = 0
-        obs[10, 6, 1] = 0
-        obs[10, 7, 1] = 0
-        obs[10, 8, 1] = 0
-        obs[10, 9, 1] = 0
-        obs[10, 10, 1] = 0
-        obs[10, 11, 1] = 0
-        obs[0, 7, 1] = 1
-        obs[0, 8, 1] = 1
-        obs[0, 9, 1] = 1
-        obs[14, 8, 1] = 1
-        obs[10, 5, 2] = 0
-        obs[10, 6, 2] = 0
-        obs[10, 7, 2] = 0
-        obs[10, 8, 2] = 0
-        obs[10, 9, 2] = 0
-        obs[10, 10, 2] = 0
-        obs[10, 11, 2] = 0
-        obs[0, 7, 2] = 1
-        obs[0, 8, 2] = 1
-        obs[0, 9, 2] = 1
-        obs[14, 8, 2] = 1
-        obs[0, 8, 2] = 1
-        obs[0, 9, 2] = 1
-        obs[14, 8, 2] = 1
-
-        obs[self.agt1_pos[0], self.agt1_pos[1], 0] = 1
-        obs[self.agt1_pos[0], self.agt1_pos[1], 1] = 0
-        obs[self.agt1_pos[0], self.agt1_pos[1], 2] = 0
-
-        obs[self.box_pos[0], self.box_pos[1], 0] = 0
-        obs[self.box_pos[0], self.box_pos[1], 1] = 1
-        obs[self.box_pos[0], self.box_pos[1], 2] = 0
+        obs = np.zeros((3, 3, 3))
+        for i in range(3):
+            for j in range(3):
+                if self.raw_occupancy[self.agt1_pos[0] - 1 + i][self.agt1_pos[1] - 1 + j] == 0:
+                    obs[i, j, 0] = 1.0
+                    obs[i, j, 1] = 1.0
+                    obs[i, j, 2] = 1.0
+                d_x = self.agt2_pos[0] - self.agt1_pos[0]
+                d_y = self.agt2_pos[1] - self.agt1_pos[1]
+                if d_x >= -1 and d_x <= 1 and d_y >= -1 and d_y <= 1:
+                    obs[1 + d_x, 1 + d_y, 0] = 0.0
+                    obs[1 + d_x, 1 + d_y, 1] = 0.0
+                    obs[1 + d_x, 1 + d_y, 2] = 1.0
+                d_x = self.box_pos[0] - self.agt1_pos[0]
+                d_y = self.box_pos[1] - self.agt1_pos[1]
+                if d_x >= -1 and d_x <= 1 and d_y >= -1 and d_y <= 1:
+                    obs[1 + d_x, 1 + d_y, 0] = 0.0
+                    obs[1 + d_x, 1 + d_y, 1] = 1.0
+                    obs[1 + d_x, 1 + d_y, 2] = 0.0
+        obs[1, 1, 0] = 1.0
+        obs[1, 1, 1] = 0.0
+        obs[1, 1, 2] = 0.0
         return obs
 
     def get_agt2_obs(self):
-        obs = np.ones((17, 17, 3))
-        for i in range(17):
-            obs[0, i, 0] = 0
-            obs[i, 0, 0] = 0
-            obs[16, i, 0] = 0
-            obs[i, 16, 0] = 0
-            obs[14, i, 0] = 0
-            obs[0, i, 1] = 0
-            obs[i, 0, 1] = 0
-            obs[16, i, 1] = 0
-            obs[i, 16, 1] = 0
-            obs[14, i, 1] = 0
-            obs[0, i, 2] = 0
-            obs[i, 0, 2] = 0
-            obs[16, i, 2] = 0
-            obs[i, 16, 2] = 0
-            obs[14, i, 2] = 0
-        obs[10, 5, 0] = 0
-        obs[10, 6, 0] = 0
-        obs[10, 7, 0] = 0
-        obs[10, 8, 0] = 0
-        obs[10, 9, 0] = 0
-        obs[10, 10, 0] = 0
-        obs[10, 11, 0] = 0
-        obs[0, 7, 0] = 1
-        obs[0, 8, 0] = 1
-        obs[0, 9, 0] = 1
-        obs[14, 8, 0] = 1
-        obs[10, 5, 1] = 0
-        obs[10, 6, 1] = 0
-        obs[10, 7, 1] = 0
-        obs[10, 8, 1] = 0
-        obs[10, 9, 1] = 0
-        obs[10, 10, 1] = 0
-        obs[10, 11, 1] = 0
-        obs[0, 7, 1] = 1
-        obs[0, 8, 1] = 1
-        obs[0, 9, 1] = 1
-        obs[14, 8, 1] = 1
-        obs[10, 5, 2] = 0
-        obs[10, 6, 2] = 0
-        obs[10, 7, 2] = 0
-        obs[10, 8, 2] = 0
-        obs[10, 9, 2] = 0
-        obs[10, 10, 2] = 0
-        obs[10, 11, 2] = 0
-        obs[0, 7, 2] = 1
-        obs[0, 8, 2] = 1
-        obs[0, 9, 2] = 1
-        obs[14, 8, 2] = 1
-        obs[0, 8, 2] = 1
-        obs[0, 9, 2] = 1
-        obs[14, 8, 2] = 1
-
-        obs[self.agt2_pos[0], self.agt2_pos[1], 0] = 0
-        obs[self.agt2_pos[0], self.agt2_pos[1], 1] = 0
-        obs[self.agt2_pos[0], self.agt2_pos[1], 2] = 1
-
-        obs[self.box_pos[0], self.box_pos[1], 0] = 0
-        obs[self.box_pos[0], self.box_pos[1], 1] = 1
-        obs[self.box_pos[0], self.box_pos[1], 2] = 0
+        obs = np.zeros((3, 3, 3))
+        for i in range(3):
+            for j in range(3):
+                if self.raw_occupancy[self.agt2_pos[0] - 1 + i][self.agt2_pos[1] - 1 + j] == 0:
+                    obs[i, j, 0] = 1.0
+                    obs[i, j, 1] = 1.0
+                    obs[i, j, 2] = 1.0
+                d_x = self.agt1_pos[0] - self.agt2_pos[0]
+                d_y = self.agt1_pos[1] - self.agt2_pos[1]
+                if d_x >= -1 and d_x <= 1 and d_y >= -1 and d_y <= 1:
+                    obs[1 + d_x, 1 + d_y, 0] = 1.0
+                    obs[1 + d_x, 1 + d_y, 1] = 0.0
+                    obs[1 + d_x, 1 + d_y, 2] = 0.0
+                d_x = self.box_pos[0] - self.agt2_pos[0]
+                d_y = self.box_pos[1] - self.agt2_pos[1]
+                if d_x >= -1 and d_x <= 1 and d_y >= -1 and d_y <= 1:
+                    obs[1 + d_x, 1 + d_y, 0] = 0.0
+                    obs[1 + d_x, 1 + d_y, 1] = 1.0
+                    obs[1 + d_x, 1 + d_y, 2] = 0.0
+        obs[1, 1, 0] = 0.0
+        obs[1, 1, 1] = 0.0
+        obs[1, 1, 2] = 1.0
         return obs
+
+    def get_state(self):
+        state = np.zeros((1, 6))
+        state[0, 0] = self.agt1_pos[0] / 15
+        state[0, 1] = self.agt1_pos[1] / 15
+        state[0, 2] = self.agt2_pos[0] / 15
+        state[0, 3] = self.agt2_pos[1] / 15
+        state[0, 4] = self.box_pos[0] / 15
+        state[0, 5] = self.box_pos[1] / 15
+        return state
 
     def get_obs(self):
         return [self.get_agt1_obs(), self.get_agt2_obs()]
@@ -356,15 +259,23 @@ class EnvMoveBox(object):
         ax3 = fig.add_subplot(gs[1, 1])
         ax4 = fig.add_subplot(gs[0, 1])
         ax1.imshow(self.get_global_obs())
+        plt.xticks([])
+        plt.yticks([])
         ax2.imshow(self.get_agt1_obs())
+        plt.xticks([])
+        plt.yticks([])
         ax3.imshow(self.get_agt2_obs())
+        plt.xticks([])
+        plt.yticks([])
         ax4.imshow(self.occupancy)
+        plt.xticks([])
+        plt.yticks([])
         plt.show()
 
     def render(self):
-        obs = np.ones((17 * 20, 17 * 20, 3))
-        for i in range(17):
-            for j in range(17):
+        obs = np.ones((15 * 20, 15 * 20, 3))
+        for i in range(15):
+            for j in range(15):
                 if self.raw_occupancy[i, j] == 1:
                     cv2.rectangle(obs, (j*20, i*20), (j*20+20, i*20+20), (0, 0, 0), -1)
         cv2.rectangle(obs, (self.agt1_pos[1] * 20, self.agt1_pos[0] * 20), (self.agt1_pos[1] * 20 + 20, self.agt1_pos[0] * 20 + 20), (0, 0, 255), -1)
@@ -372,4 +283,4 @@ class EnvMoveBox(object):
         cv2.rectangle(obs, (self.box_pos[1] * 20, self.box_pos[0] * 20),
                       (self.box_pos[1] * 20 + 20, self.box_pos[0] * 20 + 20), (0, 255, 0), -1)
         cv2.imshow('image', obs)
-        cv2.waitKey(10)
+        cv2.waitKey(100)
