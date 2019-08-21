@@ -36,12 +36,9 @@ Hello, I pushed some python environments for Multi Agent Reinforcement Learning.
 ![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/FireFighter.png)
 
 
-## Single Agent Maze Running
-![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/SingleMaze.gif)
+## Go Together
+![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/GoTogether.gif)
 
-
-## Navigation
-![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/Navigation.gif)
 
 
 ## Dependency
