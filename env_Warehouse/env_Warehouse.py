@@ -297,7 +297,7 @@ class EnvWarehouse(object):
                 temp_state[0, 2] = self.box_list[self.get_box_index(self.agt_list[i].catch_box)].pos[0]
                 temp_state[0, 3] = self.box_list[self.get_box_index(self.agt_list[i].catch_box)].pos[1]
             temp_state[0, 4] = 0
-            temp_state[0, 5] = 1
+            temp_state[0, 5] = 0
             state_list.append(temp_state)
         return state_list
 
@@ -309,8 +309,12 @@ class EnvWarehouse(object):
             temp_state[0, 1] = self.box_list[i].pos[1] / 17
             temp_state[0, 2] = -1
             temp_state[0, 3] = -1
-            temp_state[0, 4] = 1
-            temp_state[0, 5] = 0
+            if self.box_list[i].size == 0:
+                temp_state[0, 4] = 1
+                temp_state[0, 5] = 0
+            else:
+                temp_state[0, 4] = 0
+                temp_state[0, 5] = 1
             state_list.append(temp_state)
         return state_list
 
