@@ -84,10 +84,13 @@ for i in range(max_MC_iter):
   record returned reward list
   record new observation by get_obs()
   
-  
+ 
+ Cite the environment as:
  ```
-function test() {
-  console.log("notice the blank line before this function?");
+@misc{1606.01540,
+  Author = {Shuo Jiang},
+  Title = {Multi Agent Reinforcement Learning Environments Compilation},
+  Year = {2019},
 }
 ```
 
