@@ -84,7 +84,8 @@ for i in range(max_MC_iter):
   record returned reward list
   record new observation by get_obs()
   
- 
+**Citation**
+
  Cite the environment as:
  ```
 @misc{1606.01540,
