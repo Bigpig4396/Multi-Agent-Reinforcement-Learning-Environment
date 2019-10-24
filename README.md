@@ -88,7 +88,7 @@ for i in range(max_MC_iter):
 
  Cite the environment as:
  ```
-@misc{1606.01540,
+@misc{shuo2019maenvs,
   Author = {Shuo Jiang},
   Title = {Multi Agent Reinforcement Learning Environments Compilation},
   Year = {2019},
