@@ -44,6 +44,10 @@ Hello, I pushed some python environments for Multi Agent Reinforcement Learning.
 ![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/Warehouse.gif)
 
 
+## Opposite
+![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/opposite.png)
+
+
 ## Dependency
 OpenCV, swig
 
