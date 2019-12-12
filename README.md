@@ -45,7 +45,7 @@ Hello, I pushed some python environments for Multi Agent Reinforcement Learning.
 
 
 ## Opposite
-![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/opposite.png)
+![image](https://github.com/Bigpig4396/Multi-Agent-Reinforcement-Learning-Environment/blob/master/README/Opposite.png)
 
 
 ## Dependency
