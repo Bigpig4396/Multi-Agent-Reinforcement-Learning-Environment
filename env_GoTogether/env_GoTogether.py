@@ -27,6 +27,22 @@ class EnvGoTogether(object):
         self.agt1_pos = [self.map_size - 3, 1]
         self.agt2_pos = [self.map_size - 2, 2]
         self.goal_pos = [1, self.map_size - 2]
+        return [self.get_state1(), self.get_state2()]
+
+    @property
+    def n_agent(self):
+        return 2
+
+    @property
+    def obs_size(self):
+        return 2
+
+    @property
+    def n_action(self):
+        return 4
+
+    def get_env_info(self):
+        return 4
 
     def get_state(self):
         state = np.zeros((1, 4))
@@ -34,7 +50,19 @@ class EnvGoTogether(object):
         state[0, 1] = self.agt1_pos[1] / self.map_size
         state[0, 2] = self.agt2_pos[0] / self.map_size
         state[0, 3] = self.agt2_pos[1] / self.map_size
-        return state
+        return state.reshape((4, ))
+
+    def get_state1(self):
+        state = np.zeros((1, 2))
+        state[0, 0] = self.agt1_pos[0] / self.map_size
+        state[0, 1] = self.agt1_pos[1] / self.map_size
+        return state.reshape((2, ))
+
+    def get_state2(self):
+        state = np.zeros((1, 2))
+        state[0, 0] = self.agt2_pos[0] / self.map_size
+        state[0, 1] = self.agt2_pos[1] / self.map_size
+        return state.reshape((2, ))
 
     def step(self, action_list):
         reward = 0
@@ -74,7 +102,7 @@ class EnvGoTogether(object):
         done = False
         if reward > 0:
             done = True
-        return reward, done
+        return [self.get_state1(), self.get_state2()], reward, done, []
 
     def sqr_dist(self, pos1, pos2):
         return (pos1[0]-pos2[0])*(pos1[0]-pos2[0])+(pos1[1]-pos2[1])*(pos1[1]-pos2[1])
