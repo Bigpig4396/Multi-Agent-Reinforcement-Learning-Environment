@@ -52,6 +52,21 @@ class EnvMoveBox(object):
         self.is_1_catch_box = False
         self.is_2_catch_box = False
 
+    @property
+    def n_agent(self):
+        return 2
+
+    @property
+    def obs_size(self):
+        return 15*15
+
+    @property
+    def n_action(self):
+        return 4
+
+    def get_env_info(self):
+        return 15*15
+
     def reset(self):
         self.occupancy = self.raw_occupancy.copy()
 
@@ -65,6 +80,7 @@ class EnvMoveBox(object):
 
         self.is_1_catch_box = False
         self.is_2_catch_box = False
+        return [self.get_state1(), self.get_state2()]
 
     def step(self, action_list):
         if self.is_1_catch_box == False:
@@ -165,7 +181,7 @@ class EnvMoveBox(object):
             reward = 100
             done = True
             self.reset()
-        return reward, done
+        return [self.get_state1(), self.get_state2()], reward, done, []
 
     def get_global_obs(self):
         obs = np.ones((15, 15, 3))
@@ -239,17 +255,23 @@ class EnvMoveBox(object):
         return obs
 
     def get_state(self):
-        state = np.zeros((1, 6))
-        state[0, 0] = self.agt1_pos[0] / 15
-        state[0, 1] = self.agt1_pos[1] / 15
-        state[0, 2] = self.agt2_pos[0] / 15
-        state[0, 3] = self.agt2_pos[1] / 15
-        state[0, 4] = self.box_pos[0] / 15
-        state[0, 5] = self.box_pos[1] / 15
-        return state
+        haha = np.zeros((15, 15))
+        haha[self.agt1_pos[0], self.agt1_pos[1]] = 1
+        haha[self.agt2_pos[0], self.agt2_pos[1]] = -1
+        haha = haha.reshape((15*15, ))
+        return haha
 
-    def get_obs(self):
-        return [self.get_agt1_obs(), self.get_agt2_obs()]
+    def get_state1(self):
+        haha = np.zeros((15, 15))
+        haha[self.agt1_pos[0], self.agt1_pos[1]] = 1
+        haha = haha.reshape((15*15, ))
+        return haha
+
+    def get_state1(self):
+        haha = np.zeros((15, 15))
+        haha[self.agt2_pos[0], self.agt2_pos[1]] = 1
+        haha = haha.reshape((15*15, ))
+        return haha
 
     def plot_scene(self):
         fig = plt.figure(figsize=(5, 5))
