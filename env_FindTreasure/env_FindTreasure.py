@@ -36,6 +36,27 @@ class EnvFindTreasure(object):
         # sub pos = [self.map_size - 2, self.map_size - 2]
         self.sub_pos = [self.map_size - 3, self.map_size - 2]
 
+    def get_s1_index(self):
+        return self.agt1_pos[0]*7+self.agt1_pos[1]
+
+    def get_s2_index(self):
+        return self.agt2_pos[0]*7+self.agt2_pos[1]
+
+    @property
+    def n_agent(self):
+        return 2
+
+    @property
+    def obs_size(self):
+        return 2
+
+    @property
+    def n_action(self):
+        return 5
+
+    def get_env_info(self):
+        return 4
+
     def reset(self):
         self.occupancy = np.zeros((self.map_size, self.map_size))
         for i in range(self.map_size):
@@ -61,6 +82,7 @@ class EnvFindTreasure(object):
 
         # sub pos = [self.map_size - 2, self.map_size - 2]
         self.sub_pos = [self.map_size - 3, self.map_size - 2]
+        return [self.get_state1(), self.get_state2()]
 
     def step(self, action_list):
         reward = 0
@@ -145,7 +167,7 @@ class EnvFindTreasure(object):
         if reward > 0:
             done = True
 
-        return reward, done
+        return [self.get_state1(), self.get_state2()], reward, done, []
 
     def get_global_obs(self):
         obs = np.zeros((self.map_size, self.map_size, 3))
@@ -243,7 +265,19 @@ class EnvFindTreasure(object):
         state[0, 1] = self.agt1_pos[1] / self.map_size
         state[0, 2] = self.agt2_pos[0] / self.map_size
         state[0, 3] = self.agt2_pos[1] / self.map_size
-        return state
+        return state.reshape((4, ))
+
+    def get_state1(self):
+        state = np.zeros((1, 2))
+        state[0, 0] = self.agt1_pos[0] / self.map_size
+        state[0, 1] = self.agt1_pos[1] / self.map_size
+        return state.reshape((2, ))
+
+    def get_state2(self):
+        state = np.zeros((1, 2))
+        state[0, 0] = self.agt2_pos[0] / self.map_size
+        state[0, 1] = self.agt2_pos[1] / self.map_size
+        return state.reshape((2, ))
 
     def plot_scene(self):
         fig = plt.figure(figsize=(5, 5))
