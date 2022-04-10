@@ -90,12 +90,14 @@ for i in range(max_MC_iter):
   
 **Citation**
 
- Cite the environment as:
+ Cite the environment of the following paper as:
  ```
-@misc{shuo2019maenvs,
-  Author = {Shuo Jiang},
-  Title = {Multi Agent Reinforcement Learning Environments Compilation},
-  Year = {2019},
+@inproceedings{jiang2021multi,
+  title={Multi-agent reinforcement learning with directed exploration and selective memory reuse},
+  author={Jiang, Shuo and Amato, Christopher},
+  booktitle={Proceedings of the 36th Annual ACM Symposium on Applied Computing},
+  pages={777--784},
+  year={2021}
 }
 ```
 
