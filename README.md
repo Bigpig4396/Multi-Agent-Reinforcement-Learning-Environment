@@ -1,5 +1,5 @@
 # Multi-Agent-Learning-Environments
-Hello, I pushed some python environments for Multi Agent Reinforcement Learning. Some are single agent version that can be used for algorithm testing. I provide documents for each environment, you can check the corresponding pdf files in each directory. Some environments are like:
+Hello, I pushed some python environments for Multi Agent Reinforcement Learning. Some are single agent version that can be used for algorithm testing. I provide documents for each environment, you can check the corresponding pdf files in each directory. These are just toy problems, though some of them are still hard to solve. Some environments are like:
 
 
 ## Multi Agent Soccer Game
